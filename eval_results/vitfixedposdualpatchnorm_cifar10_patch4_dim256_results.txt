@@ -1,0 +1,22 @@
+Evaluation Results for checkpoint/nested_models/vitfixedposdualpatchnorm_cifar10_patch4_dim256.pth
+================================================================================
+Model: ViTFixedPosDualPatchNorm
+Embedding Dimension: 256
+Dataset: cifar10
+Test Samples: 10000
+Overall Accuracy: 86.40%
+Average Loss: 0.3995
+Evaluation Time: 1.23s
+Parameters: 13,395,978
+
+Per-Class Accuracy:
+  Class 0: 88.70% (887/1000)
+  Class 1: 94.70% (947/1000)
+  Class 2: 81.80% (818/1000)
+  Class 3: 71.00% (710/1000)
+  Class 4: 82.70% (827/1000)
+  Class 5: 79.10% (791/1000)
+  Class 6: 92.20% (922/1000)
+  Class 7: 91.20% (912/1000)
+  Class 8: 90.70% (907/1000)
+  Class 9: 91.90% (919/1000)
