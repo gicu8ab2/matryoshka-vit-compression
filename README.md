@@ -1,107 +1,185 @@
-# vision-transformers-cifar10
-This is your go-to playground for training Vision Transformers (ViT) and its related models on CIFAR-10/CIFAR-100, a common benchmark dataset in computer vision.
+# Nested Model Evaluation Guide
 
-The whole codebase is implemented in Pytorch, which makes it easier for you to tweak and experiment. Over the months, we've made several notable updates including adding different models like ConvMixer, CaiT, ViT-small, SwinTransformers, and MLP mixer. We've also adapted the default training settings for ViT to fit better with the CIFAR-10/CIFAR-100 dataset.
+This guide explains how to evaluate individual ViT models extracted from MRL (Matryoshka Representation Learning) training.
 
-Using the repository is straightforward - all you need to do is run the `train_cifar10.py` script with different arguments, depending on the model and training parameters you'd like to use.
+## Overview
 
-Thanks, the repo has been used in [20+ papers!](https://scholar.google.co.jp/scholar?hl=en&as_sdt=0%2C5&q=vision-transformers-cifar10&btnG=)
+When training with `--mrl_flag`, the `MRL_Entire_Transformer` creates multiple ViT models with different embedding dimensions (e.g., 32, 128, 256, 512). After training, each nested model is automatically saved separately for independent evaluation and deployment.
 
-Please use this citation format if you use this in your research.
-```
-@misc{yoshioka2024visiontransformers,
-  author       = {Kentaro Yoshioka},
-  title        = {vision-transformers-cifar10: Training Vision Transformers (ViT) and related models on CIFAR-10},
-  year         = {2024},
-  publisher    = {GitHub},
-  howpublished = {\url{https://github.com/kentaroy47/vision-transformers-cifar10}}
-}
-```
+## Training with MRL
 
-### Updates
-* Added [ConvMixer]((https://openreview.net/forum?id=TVHS5Y4dNvM)) implementation. Really simple! (2021/10)
+Train a model with nested representations:
 
-* Added wandb train log to reproduce results. (2022/3)
-
-* Added CaiT and ViT-small. (2022/3)
-
-* Added SwinTransformers. (2022/3)
-
-* Added MLP mixer. (2022/6)
-
-* Changed default training settings for ViT.
-
-* Fixed some bugs and training settings (2024/2)
-
-* Added onnx and torchscript model exports. (2024/12)
-
-* Added mobilevit. (2025/1)
-
-* Add CIFAR-100 support (2025/4)
-
-* Add Dynamic Tanh ViT (2025/6)
-
-# Usage example
-`python train_cifar10.py` # vit-patchsize-4
-
-`python train_cifar10.py --dataset cifar100` # cifar-100
-
-`python train_cifar10.py  --size 48` # vit-patchsize-4-imsize-48
-
-`python train_cifar10.py --patch 2` # vit-patchsize-2
-
-`python train_cifar10.py --net vit_small --n_epochs 400` # vit-small
-
-`python train_cifar10.py --net vit_timm` # train with pretrained vit
-
-`python train_cifar10.py --net dyt` # train with Layernorm-less ViT (DyT)
-
-`python train_cifar10.py --net convmixer --n_epochs 400` # train with convmixer
-
-`python train_cifar10.py --net mlpmixer --n_epochs 500 --lr 1e-3`
-
-`python train_cifar10.py --net cait --n_epochs 200` # train with cait
-
-`python train_cifar10.py --net swin --n_epochs 400` # train with SwinTransformers
-
-`python train_cifar10.py --net res18` # resnet18+randaug
-
-# Results..
-
-| CIFAR10 | Accuracy | Train Log |
-|:-----------:|:--------:|:--------:|
-| ViT patch=2 |    80%    | |
-| ViT patch=4 Epoch@200 |    80%   | [Log](https://wandb.ai/arutema47/cifar10-challange/reports/Untitled-Report--VmlldzoxNjU3MTU2?accessToken=3y3ib62e8b9ed2m2zb22dze8955fwuhljl5l4po1d5a3u9b7yzek1tz7a0d4i57r) |
-| ViT patch=4 Epoch@500 |    88%   | [Log](https://wandb.ai/arutema47/cifar10-challange/reports/Untitled-Report--VmlldzoxNjU3MTU2?accessToken=3y3ib62e8b9ed2m2zb22dze8955fwuhljl5l4po1d5a3u9b7yzek1tz7a0d4i57r) |
-| ViT patch=4 Epoch@1000 |    89%   | [Log](https://api.wandb.ai/links/arutema47/sr9eph7v) |
-| ViT patch=8 |    30%   | |
-| ViT small  | 80% | |
-| DyT |    74%   | [Log](https://api.wandb.ai/links/arutema47/9lsyl4u0) |
-| MLP mixer |    88%   | |
-| CaiT  | 80% | |
-| Swin-t  | 90% | |
-| ViT small (timm transfer) | 97.5% | |
-| ViT base (timm transfer) | 98.5% | |
-| [ConvMixerTiny(no pretrain)](https://openreview.net/forum?id=TVHS5Y4dNvM) | 96.3% |[Log](https://wandb.ai/arutema47/cifar10-challange/reports/convmixer--VmlldzoyMjEyOTk1?accessToken=2w9nox10so11ixf7t0imdhxq1rf1ftgzyax4r9h896iekm2byfifz3b7hkv3klrt)|
-|   resnet18  |  93%  | |
-|   resnet18+randaug  |  95%  | [Log](https://wandb.ai/arutema47/cifar10-challange/reports/Untitled-Report--VmlldzoxNjU3MTYz?accessToken=968duvoqt6xq7ep75ob0yppkzbxd0q03gxy2apytryv04a84xvj8ysdfvdaakij2) |
-
-| CIFAR100 | Accuracy | Train Log |
-|:-----------:|:--------:|:--------:|
-| ViT patch=4 Epoch@200 |    52%   | [Log](https://api.wandb.ai/links/arutema47/f8mz3mpk) |
-| resnet18+randaug |    71%   | [Log](https://wandb.ai/arutema47/cifar-challenge/reports/Res18-CIFAR100--VmlldzoxMjUwNzU3Mg?accessToken=fw9ojmpfuqrrxjers2duixssezqifaonvbmf8x3ynieldw3auh53ax992g0z6cx3) |
-
-
-
-# Used in..
-* Vision Transformer Pruning [arxiv](https://arxiv.org/abs/2104.08500) [github](https://github.com/Cydia2018/ViT-cifar10-pruning)
-* Understanding why ViT trains badly on small datasets: an intuitive perspective [arxiv](https://arxiv.org/abs/2302.03751)
-* Training deep neural networks with adaptive momentum inspired by the quadratic optimization [arxiv](https://arxiv.org/abs/2110.09057)
-* [Moderate coreset: A universal method of data selection for real-world data-efficient deep learning ](https://openreview.net/forum?id=7D5EECbOaf9)
-
-# Model Export
-This repository supports exporting trained models to ONNX and TorchScript formats for deployment purposes. You can export your trained models using the `export_models.py` script.
-
-### Basic Usage
 ```bash
-python export_models.py --checkpoint path/to/checkpoint --model_type vit --output_dir exported_models
+python train_cifar10.py \
+    --net vitfixedposdualpatchnorm \
+    --mrl_flag \
+    --mrl_dims 32,128,256,512 \
+    --dataset cifar10 \
+    --n_epochs 100
+```
+
+After training completes, individual models will be saved to:
+```
+checkpoint/nested_models/
+├── vitfixedposdualpatchnorm_cifar10_patch4_dim32.pth
+├── vitfixedposdualpatchnorm_cifar10_patch4_dim128.pth
+├── vitfixedposdualpatchnorm_cifar10_patch4_dim256.pth
+└── vitfixedposdualpatchnorm_cifar10_patch4_dim512.pth
+```
+
+## Evaluating Individual Models
+
+### Option 1: Evaluate a Single Model
+
+```bash
+python separate_vit_evaluator.py \
+    --model_path checkpoint/nested_models/vitfixedposdualpatchnorm_cifar10_patch4_dim512.pth \
+    --dataset cifar10 \
+    --bs 100
+```
+
+### Option 2: Evaluate All Nested Models
+
+```bash
+bash evaluate_all_nested_models.sh cifar10 vitfixedposdualpatchnorm 4
+```
+
+Or simply:
+```bash
+bash evaluate_all_nested_models.sh
+```
+(uses default values: cifar10, vitfixedposdualpatchnorm, patch size 4)
+
+## Output
+
+### Console Output
+- Real-time progress bar
+- Overall accuracy and loss
+- Per-class accuracy breakdown
+- Evaluation time
+
+### Files Generated
+
+1. **TensorBoard Logs**: `runs/eval_<model_name>/`
+   - Evaluation/Loss
+   - Evaluation/Accuracy
+   - Evaluation/Time
+   - PerClass/Class_0, Class_1, etc.
+   - Model_Info (text summary)
+
+2. **Text Results**: `eval_results/<model_name>_results.txt`
+   - Complete evaluation summary
+   - Model configuration
+   - Per-class accuracy
+
+## Viewing Results in TensorBoard
+
+```bash
+tensorboard --logdir=runs
+```
+
+Then open http://localhost:6006 in your browser.
+
+You can compare all nested models side-by-side to see the accuracy/efficiency trade-offs.
+
+## Using Models for Inference
+
+### Load a saved model in Python:
+
+```python
+import torch
+from models.vit import ViTFixedPosDualPatchNorm
+
+# Load checkpoint
+checkpoint = torch.load('checkpoint/nested_models/vitfixedposdualpatchnorm_cifar10_patch4_dim512.pth')
+
+# Recreate model
+vit_kwargs = checkpoint['vit_kwargs'].copy()
+vit_kwargs['dim'] = checkpoint['dim']
+model = ViTFixedPosDualPatchNorm(**vit_kwargs)
+
+# Load weights
+model.load_state_dict(checkpoint['model_state_dict'])
+model.eval()
+
+# Run inference
+with torch.no_grad():
+    output = model(input_tensor)
+```
+
+## Model Size Comparison
+
+The nested models provide different accuracy/efficiency trade-offs:
+
+- **dim=32**: Smallest, fastest, lowest accuracy
+- **dim=128**: Small, fast, moderate accuracy
+- **dim=256**: Medium size, good accuracy
+- **dim=512**: Largest, best accuracy, slower
+
+Use smaller models for:
+- Edge devices with limited compute
+- Real-time applications
+- Batch processing with tight latency requirements
+
+Use larger models for:
+- Server-side inference
+- Applications requiring maximum accuracy
+- When compute resources are available
+
+## Advanced Usage
+
+### Custom Evaluation Script
+
+You can modify `separate_vit_evaluator.py` to:
+- Add custom metrics
+- Test on different datasets
+- Perform error analysis
+- Generate confusion matrices
+- Measure inference speed
+
+### Batch Evaluation with Different Settings
+
+```bash
+# Evaluate with different batch sizes
+for bs in 50 100 200; do
+    python separate_vit_evaluator.py \
+        --model_path checkpoint/nested_models/vitfixedposdualpatchnorm_cifar10_patch4_dim512.pth \
+        --dataset cifar10 \
+        --bs $bs
+done
+```
+
+## Troubleshooting
+
+**Error: Model checkpoint not found**
+- Ensure you've trained with `--mrl_flag`
+- Check that training completed successfully
+- Verify the path to the checkpoint
+
+**Error: CUDA out of memory**
+- Reduce batch size with `--bs 50` or lower
+- Evaluate on CPU (remove CUDA device)
+
+**Error: Unknown ViT class**
+- Ensure the model was trained with a supported ViT variant
+- Check that the imports in `separate_vit_evaluator.py` match your model
+
+## Example Workflow
+
+```bash
+# 1. Train with MRL
+python train_cifar10.py --net vitfixedposdualpatchnorm --mrl_flag --mrl_dims 32,128,256,512
+
+# 2. Evaluate all nested models
+bash evaluate_all_nested_models.sh
+
+# 3. View results in TensorBoard
+tensorboard --logdir=runs
+
+# 4. Compare model sizes and accuracies
+ls -lh checkpoint/nested_models/
+
+# 5. Deploy the best model for your use case
+# (e.g., dim=128 for edge devices, dim=512 for servers)
+```
