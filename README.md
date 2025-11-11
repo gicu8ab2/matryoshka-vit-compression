@@ -1,6 +1,24 @@
-# Nested Model Evaluation Guide
+# Matryoshka Vision Transformer Compression
 
-This guide explains how to evaluate individual ViT models extracted from MRL (Matryoshka Representation Learning) training.
+The goal of this project is use Matryoshka representation learning with respect to the embedding dimension to compress vision transformer models.  I 
+nest the embedding dimension from small to large exponentially and keep the nested embedding dimensions fixed end-to-end through the entire
+transformer architecture from patch embedding outputs to the final layer of the final transformer block.
+
+## Acknowledgement
+This code is forked from https://github.com/kentaroy47/vision-transformers-cifar10
+
+```
+@misc{yoshioka2024visiontransformers,
+  author       = {Kentaro Yoshioka},
+  title        = {vision-transformers-cifar10: Training Vision Transformers (ViT) and related models on CIFAR-10},
+  year         = {2024},
+  publisher    = {GitHub},
+  howpublished = {\url{https://github.com/kentaroy47/vision-transformers-cifar10}}
+}
+```
+and borrows functionality from https://github.com/RAIVNLab/MRL
+
+
 
 ## Overview
 
