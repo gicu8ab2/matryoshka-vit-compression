@@ -11,7 +11,7 @@ Helper scripts under `scripts/` provide ready-made commands for typical experime
 
 ---
 
-## 1. Environment Setu
+## 1. Environment Setup
 
 ### 1.1. Python dependencies
 
